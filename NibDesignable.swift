@@ -56,7 +56,15 @@ extension NibDesignableProtocol {
      - returns: UIView instance loaded from a nib file.
      */
     public func loadNib() -> UIView {
-        let bundle = Bundle(for: type(of: self))
+        let type = type(of: self)
+        var bundle = Bundle(for: type)
+        let viewType = NSStringFromClass(type)
+        let viewModule = viewType.components(separatedBy: ".").first!
+        
+        if let bundleURL = bundle.url(forResource: viewModule, withExtension: "bundle"), let newBundle = Bundle(url: bundleURL) {
+            bundle = newBundle
+        }
+        
         let nib = UINib(nibName: self.nibName(), bundle: bundle)
         return nib.instantiate(withOwner: self, options: nil)[0] as! UIView // swiftlint:disable:this force_cast
     }
