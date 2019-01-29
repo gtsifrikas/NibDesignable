@@ -56,7 +56,7 @@ extension NibDesignableProtocol {
      - returns: UIView instance loaded from a nib file.
      */
     public func loadNib() -> UIView {
-        let type = type(of: self)
+        let type = Swift.type(of: self)
         var bundle = Bundle(for: type)
         let viewType = NSStringFromClass(type)
         let viewModule = viewType.components(separatedBy: ".").first!
@@ -85,7 +85,7 @@ extension NibDesignableProtocol {
 }
 
 extension UIView {
-    public var nibContainerView: UIView {
+    @objc public var nibContainerView: UIView {
         return self
     }
     /**
@@ -121,10 +121,17 @@ open class NibDesignableTableViewCell: UITableViewCell, NibDesignableProtocol {
     }
 
     // MARK: - Initializer
+    #if swift(>=4.2)
+    override public init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.setupNib()
+    }
+    #else
     override public init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.setupNib()
     }
+    #endif
 
     // MARK: - NSCoding
     required public init?(coder aDecoder: NSCoder) {
