@@ -65,6 +65,13 @@ extension NibDesignableProtocol {
             bundle = newBundle
         }
         
+        // Using tuist we need to bundle resources in a different bundle named <FrameworkName> + "Resources" because now we do not have cocoapods copying with custom script resources iver to the main bundle
+        if bundle.path(forResource: viewType.components(separatedBy: ".").last!, ofType: "nib") == nil {
+            if let bundleURL = bundle.url(forResource: viewModule + "Resources", withExtension: "bundle"), let newBundle = Bundle(url: bundleURL) {
+                bundle = newBundle
+            }
+        }
+        
         let nib = UINib(nibName: self.nibName(), bundle: bundle)
         return nib.instantiate(withOwner: self, options: nil)[0] as! UIView // swiftlint:disable:this force_cast
     }
